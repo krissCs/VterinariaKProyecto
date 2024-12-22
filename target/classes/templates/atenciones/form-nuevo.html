@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${pageTitle}">Nueva Atención</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.2s;
+            background-color: #f8fafc;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6366f1;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .error-text {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .error-text::before {
+            content: '⚠️';
+            font-size: 12px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #6366f1;
+            color: white;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            background-color: #4f46e5;
+            box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                margin: 20px auto;
+            }
+
+            .form-container {
+                padding: 24px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>Nueva Atención</h3>
+    <div class="form-container">
+        <form th:action="@{/atenciones/guardar}" method="post" th:object="${atencion}">
+            <div class="form-group">
+                <label for="nombreCliente">Nombre Cliente</label>
+                <input id="nombreCliente" type="text" th:field="*{nombreCliente}" required>
+                <span class="error-text" th:if="${#fields.hasErrors('nombreCliente')}" th:errors="*{nombreCliente}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="tipoAtencion">Tipo Atención</label>
+                <input id="tipoAtencion" type="text" th:field="*{tipoAtencion}" required>
+                <span class="error-text" th:if="${#fields.hasErrors('tipoAtencion')}" th:errors="*{tipoAtencion}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="fechaAtencion">Fecha Atención</label>
+                <input id="fechaAtencion" type="date" th:field="*{fechaAtencion}" required>
+                <span class="error-text" th:if="${#fields.hasErrors('fechaAtencion')}" th:errors="*{fechaAtencion}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="hora">Hora</label>
+                <input id="hora" type="time" th:field="*{hora}" required>
+                <span class="error-text" th:if="${#fields.hasErrors('hora')}" th:errors="*{hora}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select id="estado" th:field="*{estado}" required>
+                    <option value="" disabled selected>Seleccionar estado</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En progreso">En progreso</option>
+                    <option value="Completada">Completada</option>
+                    <option value="Cancelada">Cancelada</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Recuperándose">Recuperándose</option>
+                    <option value="En observación">En observación</option>
+                </select>
+                <span class="error-text" th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}"></span>
+            </div>
+            
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                    💾 Guardar
+                </button>
+                <a th:href="@{'/atenciones'}" class="btn btn-secondary">
+                    ← Volver
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Lista de Atenciones</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --danger: #ef4444;
+        --danger-hover: #dc2626;
+        --warning: #f59e0b;
+        --warning-hover: #d97706;
+        --success: #10b981;
+        --success-hover: #059669;
+        --surface: #ffffff;
+        --background: #f8fafc;
+        --text: #1f2937;
+        --text-light: #6b7280;
+        --border: #e2e8f0;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+      }
+
+      .header {
+        background: var(--surface);
+        border-radius: 16px;
+        padding: 1.75rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header h1 {
+        font-size: 1.75rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--text);
+      }
+
+      .header h1::before {
+        content: "📋";
+        font-size: 2rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.875rem 1.75rem;
+        border-radius: 10px;
+        font-weight: 500;
+        text-decoration: none;
+        color: white;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+      }
+
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      .btn-primary {
+        background: var(--primary);
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+      }
+
+      .btn-danger {
+        background: var(--danger);
+      }
+
+      .btn-danger:hover {
+        background: var(--danger-hover);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+      }
+
+      .btn-warning {
+        background: var(--warning);
+      }
+
+      .btn-warning:hover {
+        background: var(--warning-hover);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+      }
+
+      .btn-sm {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+        border-radius: 8px;
+      }
+
+      .card {
+        background: var(--surface);
+        border-radius: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: box-shadow 0.3s ease;
+      }
+
+      .card:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .table-container {
+        overflow-x: auto;
+        margin: 0 -1px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        text-align: left;
+        padding: 1.25rem 1.5rem;
+        background: var(--background);
+        font-weight: 600;
+        color: var(--text-light);
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 2px solid var(--border);
+      }
+
+      td {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.95rem;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tbody tr {
+        transition: background-color 0.2s ease;
+      }
+
+      tbody tr:hover {
+        background-color: rgba(99, 102, 241, 0.04);
+      }
+
+      .actions {
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        background: var(--primary);
+        color: white;
+      }
+
+      .status-badge[data-status="Pendiente"] {
+        background: var(--warning);
+        color: #ffffff;
+      }
+
+      .status-badge[data-status="Completada"] {
+        background: var(--success);
+        color: #ffffff;
+      }
+
+      .status-badge[data-status="En progreso"] {
+        background: var(--primary);
+        color: #ffffff;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-light);
+      }
+
+      .footer {
+        margin-top: 2rem;
+        text-align: center;
+        animation: slideUp 0.4s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 1rem;
+        }
+
+        .header {
+          flex-direction: column;
+          gap: 1.25rem;
+          text-align: center;
+          padding: 1.5rem;
+        }
+
+        .header h1 {
+          justify-content: center;
+        }
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        td,
+        th {
+          padding: 1rem;
+        }
+
+        .actions {
+          flex-direction: column;
+        }
+
+        .card {
+          border-radius: 12px;
+          margin: 0 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Lista de Atenciones</h1>
+        <a th:href="@{/atenciones/nuevo}" class="btn btn-primary">
+          ➕ Registrar Nueva Atención
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre Mascota</th>
+                <th>Tipo Atención</th>
+                <th>Fecha Atención</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="atencion : ${atenciones}">
+                <td th:text="${atencion.codigoAtencion}"></td>
+                <td th:text="${atencion.nombreCliente}"></td>
+                <td th:text="${atencion.tipoAtencion}"></td>
+                <td th:text="${atencion.fechaAtencion}"></td>
+                <td th:text="${atencion.hora}"></td>
+                <td>
+                  <span
+                    class="status-badge"
+                    th:data-status="${atencion.estado}"
+                    th:text="${atencion.estado}"
+                  ></span>
+                </td>
+                <td class="actions">
+                  <a
+                    th:href="@{/atenciones/editar/{id}(id=${atencion.codigoAtencion})}"
+                    class="btn btn-warning btn-sm"
+                  >
+                    ✏️ Editar
+                  </a>
+                  <a
+                    th:href="@{/atenciones/eliminar/{id}(id=${atencion.codigoAtencion})}"
+                    class="btn btn-danger btn-sm"
+                    onclick="return confirm('¿Estás seguro de eliminar esta atención?');"
+                  >
+                    🗑️ Eliminar
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer">
+        <a th:href="@{'/'}" class="btn btn-danger"> ← Volver al Inicio </a>
+      </div>
+    </div>
+  </body>
+</html>

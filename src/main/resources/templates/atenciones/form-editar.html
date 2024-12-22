@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${pageTitle}">Editar Atención</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f5f5f9;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            color: #1a1a1a;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .title-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .title-card i {
+            color: #666;
+            font-size: 24px;
+        }
+
+        h3 {
+            color: #1a1a1a;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .help-text {
+            display: block;
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            color: #1a1a1a;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .error-text {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 4px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .btn-secondary {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #dc2626;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 24px 0;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="title-card">
+            <i class="material-icons">edit</i>
+            <h3>Editar Atención</h3>
+        </div>
+    </div>
+
+    <div class="card">
+        <form th:action="@{/atenciones/actualizar}" method="post" th:object="${atencion}">
+            <input type="hidden" th:field="*{codigoAtencion}" />
+
+            <div class="form-group">
+                <label for="nombreCliente">Nombre de la Mascota</label>
+                <input id="nombreCliente" type="text" th:field="*{nombreCliente}" required>
+                <span class="help-text">Ingrese el nombre completo de la mascota</span>
+                <span class="error-text" th:if="${#fields.hasErrors('nombreCliente')}" 
+                      th:errors="*{nombreCliente}">Error en Nombre Mascota</span>
+            </div>
+
+            <div class="form-group">
+                <label for="tipoAtencion">Tipo Atención</label>
+                <input id="tipoAtencion" type="text" th:field="*{tipoAtencion}" required>
+                <span class="error-text" th:if="${#fields.hasErrors('tipoAtencion')}" 
+                      th:errors="*{tipoAtencion}">Error en Tipo Atención</span>
+            </div>
+
+            <div class="form-group">
+                <label for="fechaAtencion">Fecha Atención</label>
+                <input id="fechaAtencion" type="date" 
+                       th:value="${#temporals.format(atencion.fechaAtencion, 'yyyy-MM-dd')}" 
+                       name="fechaAtencion" required>
+                <span class="error-text" th:if="${#fields.hasErrors('fechaAtencion')}" 
+                      th:errors="*{fechaAtencion}">Error en Fecha Atención</span>
+            </div>
+
+            <div class="form-group">
+                <label for="hora">Hora</label>
+                <input id="hora" type="time" 
+                       th:value="${#temporals.format(atencion.hora, 'HH:mm')}" 
+                       name="hora" required>
+                <span class="error-text" th:if="${#fields.hasErrors('hora')}" 
+                      th:errors="*{hora}">Error en Hora</span>
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select id="estado" th:field="*{estado}" required>
+                    <option value="" disabled selected>Seleccionar estado</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En progreso">En progreso</option>
+                    <option value="Completada">Completada</option>
+                    <option value="Cancelada">Cancelada</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Recuperándose">Recuperándose</option>
+                    <option value="En observación">En observación</option>
+                </select>
+                <span class="error-text" th:if="${#fields.hasErrors('estado')}" 
+                      th:errors="*{estado}">Error en Estado</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="material-icons">save</i>
+                Guardar Cambios
+            </button>
+
+            <a th:href="@{'/atenciones'}" class="btn btn-secondary">
+                <i class="material-icons">arrow_back</i>
+                Volver
+            </a>
+        </form>
+    </div>
+</div>
+</body>
+</html>
